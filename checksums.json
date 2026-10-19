@@ -60,8 +60,8 @@
     "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
   },
   "release/build_release.py": {
-    "bytes": 3047,
-    "sha256": "d083c95237da7584338c49184483420f5941612522e92cab1e1f59b9411c3c86"
+    "bytes": 3125,
+    "sha256": "9b183ceae967e9102469804c7b6df8c3372e9ddc3572c74ac7968372a82607ce"
   },
   ".github/workflows/release.yml": {
     "bytes": 1101,

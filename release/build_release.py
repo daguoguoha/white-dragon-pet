@@ -35,6 +35,7 @@ archive = OUT / f'Codex-Girl-{TAG}-Windows.zip'
 with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
     for name, data in sorted(payload.items()):
         info = zipfile.ZipInfo(f'Codex-Girl-{TAG}/{name}', date_time=(2026, 10, 19, 0, 0, 0))
+        info.create_system = 3  # Identical ZIP headers on Windows and Linux.
         info.compress_type = zipfile.ZIP_DEFLATED
         info.external_attr = 0o100644 << 16
         z.writestr(info, data)
