@@ -53,9 +53,7 @@ namespace CodexGirl {
             for (int i = 0; i < crops.Count; i++) {
                 var visible = new CroppedBitmap(crops[i], bounds[i]); visible.Freeze();
                 double width = bounds[i].Width * factor, height = bounds[i].Height * factor;
-                var drawing = new DrawingVisual(); RenderOptions.SetBitmapScalingMode(drawing, BitmapScalingMode.HighQuality);
-                using (DrawingContext dc = drawing.RenderOpen()) dc.DrawImage(visible, new Rect(96 - width / 2, 202 - height, width, height));
-                var frame = new RenderTargetBitmap(192, 208, 96, 96, PixelFormats.Pbgra32); frame.Render(drawing); frame.Freeze(); frames.Add(frame);
+                frames.Add(DesktopArtwork.Render(visible, new Rect(96 - width / 2, 202 - height, width, height)));
             }
             return frames;
         }

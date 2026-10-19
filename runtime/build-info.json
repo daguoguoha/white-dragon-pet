@@ -1,17 +1,18 @@
 {
-    "executable_sha256":  "8633dc33f1a62fd4255541df6d51b1456c642807f504457ec377d1a1491fd8a5",
+    "executable_sha256":  "26f54e79afd03bab4c91708cbebaac0ce36df44e1d9ed315a72f4e6b96100285",
     "sources":  {
                     "quota/QuotaCore.cs":  "a27faedaa949ead5d9727977af90ecdcf4cb252f3936087c05472bed3751d338",
-                    "quota/QuotaPet.cs":  "b38f10cdaa7ad22f5f81174e25568f12fc366fb3098f9e53af7e37d96551e8df",
+                    "quota/QuotaPet.cs":  "c6cbfcbd838c656a8ec2de458d6b84ac98b76d7a6c136c533b70db0fc43445da",
                     "quota/Program.cs":  "d3513775ff09924125cef0a22c3340afc4dddc0866729e8fb2cbe5c6549635cd",
-                    "quota/AssemblyInfo.cs":  "772f6829e6d59e6981d4c79d21d3f599d4482344f2cf8dcf68ee87843ba7e14a",
+                    "quota/AssemblyInfo.cs":  "2bdc918c43789bd6a388211c80f66570cda53f783ff85d10486f14f7361048c1",
                     "quota/PetInstaller.cs":  "57c10da60d15320063814bf05a7c2df3712e8afe467f2e7f7956833d0df0b5a6",
                     "quota/PetImportWindow.cs":  "d175c4bdb7a5eea144d4dcd4ce55426f8ce52cdad6ffb79492c3f93e97657183",
                     "quota/PetBehavior.cs":  "5d28684f5733cc89ee13de64dd8427d120e3e0a6942f271487b811f51e1f17b2",
-                    "quota/DesktopPet.cs":  "5dd9cdf52f88196e279e2f67d147be6565c1b36ca2b27a9b9b24ba31d95e1060",
+                    "quota/DesktopPet.cs":  "8e9943c41916bb155a51d1323271c34a6e4635dd1c33f9386cf2a4a332403b0c",
                     "quota/CompanionServices.cs":  "4d8968bb25cb35840ab18f830c221d54f2a3b7b5d1d15ec601750bafc665d564",
                     "quota/CompanionDialogs.cs":  "d7bf43f08d3178b3866eb071811b5c89436ccab62d9cf8148c267172efd45eb0",
-                    "quota/InteractionAnimations.cs":  "9a32d2f7931e237e09729cfcfd31ef80f6826e609509c2a75c8cd6158b6e9fb5",
+                    "quota/InteractionAnimations.cs":  "6d731ef2724dd62280b18f2a2dbc629799de00a6ab85bc3694b66da8a7a50473",
+                    "quota/DesktopArtwork.cs":  "56c7ecdec4583d49f1000542e17d439f9c79f689346861b83d51bc0d8f723081",
                     "assets/spritesheet.png":  "5f005dfa78832a39409cbd30c659c26e82fc260d8a5a79f315fe570ef544475d",
                     "THIRD_PARTY_NOTICES.md":  "b42f80146f19c0b1637704dbc78262923a58bb797e3655273910f24461bccf2b",
                     "assets/interactions-v2.png":  "4a0544fb4e14186be2a1756e27228da5fc0e6fce7fce951b8d0ce13864cb557a",
@@ -19,6 +20,17 @@
                     "assets/foods/cake-v1.png":  "42d82242c6e7140fb3e343632f64a50030435f381179c58db2d1b9967238c5ff",
                     "assets/foods/lollipop-v1.png":  "8d9086459764f31316c6f33c4e1d3cca1f8f4c638b21e04e7fd49c263af2c415",
                     "assets/foods/dango-v1.png":  "1af9778920b126627484abe5759b2c899859cf4e61fde59533d9e23cfd49ed70",
-                    "assets/foods/diamond-v1.png":  "fbafdb0323d50bc6d79cef52730c4eda2b93dade57e1e7cd8b76ce1e81e830bc"
+                    "assets/foods/diamond-v1.png":  "fbafdb0323d50bc6d79cef52730c4eda2b93dade57e1e7cd8b76ce1e81e830bc",
+                    "quota/app.manifest":  "f565993bda095ffea523019d7ce35f1fb502d7851cbdedd11d94855fef383e6a",
+                    "assets/desktop/desktop-artwork.json":  "8d6ca27c5cb9e9008a1bd227d867694d7e18794810ef183bf30554e911dab48e",
+                    "assets/desktop/desktop-failed.png":  "79f8d367cdb5f4f26052bdfecee3248cd05627deb9de5c8c06621cca91a0c0e4",
+                    "assets/desktop/desktop-idle.png":  "f26cdae0a61104ac47cb4d8056b8ada062f456e18c4ae1e67706e84213c9f849",
+                    "assets/desktop/desktop-jumping.png":  "5d8f31dab7c795a5ff0ebccdcefc713192690baaa482b9b53a4165c315f71b99",
+                    "assets/desktop/desktop-review.png":  "5480593f1724c907c4c96cfa410b1e2bdb3dfa0e2bb6849191eccd813bddb9b1",
+                    "assets/desktop/desktop-running.png":  "52d3b43406816bc6968346772732bd220c79b1e3e49d8b5cfdf272baedf37aef",
+                    "assets/desktop/desktop-running-left.png":  "2da7835eb22a43ac8b6ef6f219cd4ff4a6ec19fac93f21277135a1223bec0cad",
+                    "assets/desktop/desktop-running-right.png":  "343713e5ddac09d1d518cbfd64965667d636a5a01f56806ed5f70ff3940e5c86",
+                    "assets/desktop/desktop-waiting.png":  "0aed1cbe3ec3e0e9c263528dc6fb9ed045f23eabf8e6e94f5d28cf5f1a3e8f98",
+                    "assets/desktop/desktop-waving.png":  "4e93c47f846650e7bed1d386cf613d50ca5febbf2455faf81d806277aea74871"
                 }
 }

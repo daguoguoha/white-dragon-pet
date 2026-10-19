@@ -13,15 +13,15 @@ foreach ($state in [CodexGirl.InteractionAnimations]::States) {
     $frames = $bank[$state]; $hashes = @(); $encoded = @()
     for ($index=0; $index -lt $frames.Count; $index++) {
         $frame = $frames[$index]
-        Assert ($frame.PixelWidth -eq 192 -and $frame.PixelHeight -eq 208) "$state frame $index matches the render cell"
+        Assert ($frame.PixelWidth -eq 384 -and $frame.PixelHeight -eq 416 -and $frame.Width -eq 192 -and $frame.Height -eq 208) "$state frame $index preserves high-DPI detail at the original logical size"
         $encoder = New-Object Windows.Media.Imaging.PngBitmapEncoder
         $encoder.Frames.Add([Windows.Media.Imaging.BitmapFrame]::Create($frame))
         $path = Join-Path $testDir ("$state-$index.png")
         $stream = [IO.File]::Create($path); try { $encoder.Save($stream) } finally { $stream.Dispose() }
         $hashes += (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash
         $encoded += 'data:image/png;base64,' + [Convert]::ToBase64String([IO.File]::ReadAllBytes($path))
-        $pixels = New-Object byte[] (192*208*4); $frame.CopyPixels($pixels,192*4,0)
-        Assert ($pixels[3] -eq 0 -and $pixels[(208*192-1)*4+3] -eq 0) "$state frame $index keeps transparent corners"
+        $pixels = New-Object byte[] ($frame.PixelWidth*$frame.PixelHeight*4); $frame.CopyPixels($pixels,$frame.PixelWidth*4,0)
+        Assert ($pixels[3] -eq 0 -and $pixels[$pixels.Length-1] -eq 0) "$state frame $index keeps transparent corners"
     }
     Assert (@($hashes | Select-Object -Unique).Count -eq 4) "$state has four different animation frames"
     $allFrames[$state] = $encoded

@@ -33,7 +33,6 @@ namespace CodexGirl {
         readonly Grid layout;
         readonly MenuItem quotaMenu;
         readonly List<BitmapSource> idle = new List<BitmapSource>();
-        readonly DispatcherTimer animation = new DispatcherTimer();
         readonly DispatcherTimer heartbeat = new DispatcherTimer();
         readonly Brush violet = BrushOf("#9683D0");
         readonly Brush muted = BrushOf("#AAA5B6");
@@ -65,7 +64,8 @@ namespace CodexGirl {
             Title = "Codex娘 · Quota";
             WindowStyle = WindowStyle.None; AllowsTransparency = true; Background = Brushes.Transparent;
             ResizeMode = ResizeMode.NoResize; ShowInTaskbar = true; Topmost = true;
-            FontFamily = new FontFamily("Microsoft YaHei UI");
+            FontFamily = new FontFamily("Microsoft YaHei UI"); UseLayoutRounding = true;
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
             layout = new Grid { Width = 470, Height = 286, Background = Brushes.Transparent };
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(204) });
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(258) });
@@ -123,9 +123,8 @@ namespace CodexGirl {
                 if (e.OriginalSource is TextBlock || e.OriginalSource == card) { try { DragMove(); } catch (InvalidOperationException) { } }
             };
             LocationChanged += delegate { if (IsLoaded) prefsDirty = true; };
-            Closed += delegate { closed = true; animation.Stop(); heartbeat.Stop(); if (client != null) client.Dispose(); SavePrefs(); };
+            Closed += delegate { closed = true; heartbeat.Stop(); if (client != null) client.Dispose(); SavePrefs(); };
             Loaded += delegate {
-                animation.Tick += delegate { Animate(); }; animation.Interval = TimeSpan.FromMilliseconds(280); animation.Start();
                 heartbeat.Tick += delegate { UpdateLabels(); if (prefsDirty) SavePrefs(); if (DateTime.UtcNow >= nextPoll) Refresh(false); }; heartbeat.Interval = TimeSpan.FromSeconds(1); heartbeat.Start(); Refresh(false);
             };
         }
@@ -145,9 +144,6 @@ namespace CodexGirl {
             DockPanel.SetDock(value, Dock.Right); heading.Children.Add(value); label = Text("额度", 12, "#6E627C"); heading.Children.Add(label); content.Children.Add(heading);
             bar = new ProgressBar { Minimum = 0, Maximum = 100, Height = 5, Background = BrushOf("#EDE8F4"), Foreground = BrushOf("#9683D0"), BorderThickness = new Thickness(0), Margin = new Thickness(0, 6, 0, 4) }; content.Children.Add(bar);
             reset = Text("重置时间暂不可用", 10, "#9C91A7"); reset.Margin = new Thickness(0, 0, 0, 12); content.Children.Add(reset);
-        }
-        void Animate() {
-            AnimateDesktop();
         }
         void Refresh(bool manual) {
             DateTime now = DateTime.UtcNow;

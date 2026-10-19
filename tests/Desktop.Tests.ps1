@@ -51,7 +51,7 @@ Assert ($atlas.Count -eq 11 -and $atlas[1].Count -eq 8 -and $atlas[6].Count -eq 
 Assert ((Read-Private 'renderedAction') -eq 'game') 'interaction selects the gameplay animation'
 $window.Render((Join-Path $testDir 'interaction.png'))
 
-# Exercise the real HWND, tray and motion timer without making a quota request.
+# Exercise the real HWND, tray and rendering subscription without making a quota request.
 $type.GetField('busy',$flags).SetValue($window,$true)
 $window.Left = -10000; $window.Top = -10000; $window.Show()
 Assert ($null -ne (Read-Private 'tray')) 'a recovery tray icon is created on launch'
@@ -80,6 +80,6 @@ $type.GetField('target',$flags).SetValue($window,$destination)
 [void](Invoke-Private 'MovePet' @([DateTime]::UtcNow,[double]0.1))
 Assert ($window.Left -lt $before -and $before - $window.Left -le 11) 'walking advances smoothly at a bounded speed (including device-pixel rounding)'
 $window.Close()
-Assert (-not (Read-Private 'motion').IsEnabled) 'closing stops movement and disposes the tray'
+Assert (-not (Read-Private 'renderingAttached') -and $null -ne (Read-Private 'tray')) 'closing detaches the rendering callback and disposes the tray'
 $other.Close()
 Write-Host "All desktop checks passed. Artifacts: $testDir"

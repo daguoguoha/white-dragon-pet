@@ -8,7 +8,7 @@ try {
         [System.Windows.Media.ImageSource].Assembly.Location,
         [System.Windows.Threading.Dispatcher].Assembly.Location,
         [System.Xaml.XamlReader].Assembly.Location)
-    $sourceFiles = @('QuotaCore.cs', 'QuotaPet.cs', 'PetInstaller.cs', 'PetImportWindow.cs', 'PetBehavior.cs', 'DesktopPet.cs', 'CompanionServices.cs', 'CompanionDialogs.cs', 'InteractionAnimations.cs') | ForEach-Object { Join-Path $PSScriptRoot $_ }
+    $sourceFiles = @('QuotaCore.cs', 'QuotaPet.cs', 'PetInstaller.cs', 'PetImportWindow.cs', 'PetBehavior.cs', 'DesktopPet.cs', 'CompanionServices.cs', 'CompanionDialogs.cs', 'InteractionAnimations.cs', 'DesktopArtwork.cs') | ForEach-Object { Join-Path $PSScriptRoot $_ }
     Add-Type -Path $sourceFiles -ReferencedAssemblies $references
     $root = Split-Path $PSScriptRoot -Parent
     $sheet = Join-Path $root 'spritesheet.png'

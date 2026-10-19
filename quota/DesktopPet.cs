@@ -10,13 +10,11 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using Forms = System.Windows.Forms;
 
 namespace CodexGirl {
     public sealed partial class QuotaPetWindow {
         readonly PetBehavior brain = new PetBehavior(DateTime.UtcNow);
-        readonly DispatcherTimer motion = new DispatcherTimer();
         readonly Random random = new Random();
         readonly List<List<BitmapSource>> actions = new List<List<BitmapSource>>();
         Dictionary<string, List<BitmapSource>> interactionActions;
@@ -28,13 +26,18 @@ namespace CodexGirl {
         Forms.NotifyIcon tray;
         System.Drawing.Icon trayIcon;
         readonly Dictionary<string, MenuItem> modeItems = new Dictionary<string, MenuItem>();
+        readonly Dictionary<int, MenuItem> frameRateItems = new Dictionary<int, MenuItem>();
+        int targetFrameRate = 60;
+        bool renderingAttached;
+        double lastRenderAt = -1, nextRenderAt, nextPoseAt;
+        TimeSpan lastComposition = TimeSpan.MinValue;
         MenuItem moodItem, passthroughItem;
         string movementMode = "still", renderedAction = "";
         bool pointerDown, dragging, onHead, stroked, paused, moving, passthrough;
         Point pressScreen, pressWindow, lastPointer;
         double strokeDistance;
         int actionFrame;
-        DateTime bubbleUntil, nextTarget, nextIdleLine, nextParticle, edgeUntil, edgeCooldown, lastMotion;
+        DateTime bubbleUntil, nextTarget, nextIdleLine, nextParticle, edgeUntil, edgeCooldown;
         DateTime nextSystemCheck;
         string edgePose = "";
         Point? target;
@@ -55,6 +58,8 @@ namespace CodexGirl {
                 for (int x = 0; x < counts[row]; x++) frames.Add(Crop(source, x, row));
                 actions.Add(frames);
             }
+            DesktopArtwork.Load(sheetPath, actions);
+            pet.Source = actions[0][0];
             interactionActions = InteractionAnimations.Load(sheetPath);
             Title = "Codex娘 · 桌面伙伴";
             pet.ToolTip = "按住头部轻抚 · 拖动身体移动 · 双击切换额度 · 右键互动";
@@ -95,6 +100,14 @@ namespace CodexGirl {
                 item.Click += delegate { SetMovement(key); }; modes.Items.Add(item); modeItems.Add(key, item);
             }
             menu.Items.Insert(1, modes);
+            var frameRates = new MenuItem { Header = "动画流畅度" };
+            foreach (int rate in new[] { 60, 30 }) {
+                int selected = rate;
+                var item = new MenuItem { Header = rate == 60 ? "流畅 · 60 FPS" : "省电 · 30 FPS", IsCheckable = true };
+                item.Click += delegate { SetFrameRate(selected); SaveDesktopPrefs(); };
+                frameRates.Items.Add(item); frameRateItems.Add(rate, item);
+            }
+            menu.Items.Insert(2, frameRates);
             AddItem(menu, "和她聊天 / AI 设置", OpenChat);
             AddItem(menu, "查看天气", OpenWeather);
             AddItem(menu, "查看系统状态", delegate { Say(monitor.Read(), null); });
@@ -108,17 +121,46 @@ namespace CodexGirl {
             }; menu.Items.Add(startup);
             AddItem(menu, "回到屏幕内", Recover);
             AddItem(menu, "关于 / 参考项目许可", delegate {
-                string notice = "Codex娘 1.3.2 · 独立桌面伙伴\n交互和动作过渡参考 GenhuiC-sudo/11，含五种食物各自的进食动画。GPU 温度暂无支持。\n\n";
+                string notice = "Codex娘 1.3.4 · 独立桌面伙伴\n高清原画直接渲染，动作缓存 384×416。默认目标 60 FPS，支持 30 FPS 省电模式。交互和动作过渡参考 GenhuiC-sudo/11，含五种食物各自的进食动画。GPU 温度暂无支持。\n\n";
                 using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("THIRD_PARTY_NOTICES.md"))
                     if (stream != null) using (var reader = new StreamReader(stream)) notice += reader.ReadToEnd();
                 MessageBox.Show(this, notice, "Codex娘 · 关于");
             });
             menu.Opened += delegate { moodItem.Header = "心情 " + brain.Mood + " / 100"; };
-            LoadDesktopPrefs(); UpdateModeChecks();
-            nextIdleLine = DateTime.UtcNow.AddSeconds(35); lastMotion = DateTime.UtcNow;
-            motion.Interval = TimeSpan.FromMilliseconds(33); motion.Tick += DesktopTick;
-            Loaded += delegate { CreateTray(); motion.Start(); Say("我来啦，右键我可以互动哦。", "✧"); };
-            Closed += delegate { motion.Stop(); if (tray != null) { tray.Visible = false; tray.Dispose(); } if (trayIcon != null) trayIcon.Dispose(); SaveDesktopPrefs(); };
+            LoadDesktopPrefs(); UpdateModeChecks(); SetFrameRate(targetFrameRate);
+            nextIdleLine = DateTime.UtcNow.AddSeconds(35);
+            Loaded += delegate { CreateTray(); StartRendering(); Say("我来啦，右键我可以互动哦。", "✧"); };
+            IsVisibleChanged += delegate { if (IsVisible && IsLoaded) StartRendering(); else StopRendering(); };
+            Closed += delegate { StopRendering(); if (tray != null) { tray.Visible = false; tray.Dispose(); } if (trayIcon != null) trayIcon.Dispose(); SaveDesktopPrefs(); };
+        }
+        void SetFrameRate(int rate) {
+            targetFrameRate = rate == 30 ? 30 : 60; nextRenderAt = 0;
+            foreach (var pair in frameRateItems) pair.Value.IsChecked = pair.Key == targetFrameRate;
+        }
+        void StartRendering() {
+            if (renderingAttached || closed || !IsVisible) return;
+            lastRenderAt = -1; nextRenderAt = 0; lastComposition = TimeSpan.MinValue;
+            // Resume without replaying all the sprite frames missed while hidden.
+            nextPoseAt = animationClock.Elapsed.TotalSeconds;
+            CompositionTarget.Rendering += RenderDesktop; renderingAttached = true;
+        }
+        void StopRendering() {
+            if (!renderingAttached) return;
+            CompositionTarget.Rendering -= RenderDesktop; renderingAttached = false;
+        }
+        void RenderDesktop(object sender, EventArgs args) {
+            var frame = args as RenderingEventArgs;
+            if (frame == null || frame.RenderingTime == lastComposition || !IsVisible || closed) return;
+            lastComposition = frame.RenderingTime;
+            double stamp = frame.RenderingTime.TotalSeconds, interval = 1.0 / targetFrameRate;
+            if (stamp + .0005 < nextRenderAt) return;
+            // Keep the phase instead of scheduling from callback arrival; timer jitter cannot slow playback.
+            nextRenderAt += Math.Max(1, Math.Floor((stamp + .0005 - nextRenderAt) / interval) + 1) * interval;
+            double now = animationClock.Elapsed.TotalSeconds;
+            double elapsed = lastRenderAt < 0 ? 0 : Math.Max(0, Math.Min(.1, now - lastRenderAt));
+            lastRenderAt = now;
+            DesktopTick(DateTime.UtcNow, elapsed);
+            RenderPoseAt(now);
         }
         static void AddChild(MenuItem parent, string header, Action action) { var item = new MenuItem { Header = header }; item.Click += delegate { action(); }; parent.Items.Add(item); }
         void Say(string line, string effect) {
@@ -164,9 +206,7 @@ namespace CodexGirl {
             else if (!stroked) { if (onHead) { brain.React("happy", DateTime.UtcNow, 2); Say("我在呢。", "✧"); } else { brain.Poke(DateTime.UtcNow); Say("呜哇，有点痒！", "!"); } }
             e.Handled = true;
         }
-        void DesktopTick(object sender, EventArgs args) {
-            DateTime now = DateTime.UtcNow;
-            double elapsed = Math.Max(0, Math.Min(.1, (now - lastMotion).TotalSeconds)); lastMotion = now;
+        void DesktopTick(DateTime now, double elapsed) {
             bool blocked = paused || pointerDown || ContextMenu.IsOpen || !IsVisible;
             bool wasSleeping = brain.Sleeping; brain.Tick(now, blocked);
             if (!wasSleeping && brain.Sleeping) Say("Zzz……", "z");
@@ -231,8 +271,13 @@ namespace CodexGirl {
             Left += delta.X / distanceLeft * step; Top += delta.Y / distanceLeft * step; moving = true;
         }
         void AnimateDesktop() {
+            // Deterministic single-step entry point used by asset previews.
+            RenderPoseAt(Math.Max(animationClock.Elapsed.TotalSeconds, nextPoseAt));
+        }
+        void RenderPoseAt(double now) {
             string state = CurrentAnimationState();
-            if (state != renderedAction) {
+            bool changed = state != renderedAction;
+            if (changed) {
                 previousPose.Source = pet.Source; previousPose.RenderTransform = pet.RenderTransform.CloneCurrentValue();
                 previousPose.BeginAnimation(UIElement.OpacityProperty, new System.Windows.Media.Animation.DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(140)));
                 pet.BeginAnimation(UIElement.OpacityProperty, new System.Windows.Media.Animation.DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(140)));
@@ -241,10 +286,20 @@ namespace CodexGirl {
             int row = state == "left" ? 2 : state == "right" ? 1 : state == "jump" ? 4 : state == "surprise" || state == "angry" ? 5 : state == "rest" || state == "sleep" || state == "bored" ? 6 : state == "game" ? 7 : state == "book" ? 8 : state == "love" || state == "happy" ? 3 : 0;
             List<BitmapSource> frames = actions[row];
             if (interactionActions.ContainsKey(state)) frames = interactionActions[state];
-            int index = actionFrame % frames.Count;
-            pet.Source = frames[index];
-            animation.Interval = TimeSpan.FromMilliseconds(state == "sleep" ? 480 : state == "eat" || state.StartsWith("eat-", StringComparison.Ordinal) ? 220 : interactionActions.ContainsKey(state) ? 200 : row == 1 || row == 2 ? 90 : row == 0 ? idleTiming[index] : row == 4 ? 160 : 180);
-            actionFrame = (actionFrame + 1) % frames.Count;
+            if (changed) nextPoseAt = now + PoseDuration(state, row, 0);
+            else {
+                double cycle = 0;
+                for (int i = 0; i < frames.Count; i++) cycle += PoseDuration(state, row, i);
+                if (now - nextPoseAt >= cycle) nextPoseAt += Math.Floor((now - nextPoseAt) / cycle) * cycle;
+                while (now + .000001 >= nextPoseAt) {
+                    actionFrame = (actionFrame + 1) % frames.Count;
+                    nextPoseAt += PoseDuration(state, row, actionFrame);
+                }
+            }
+            if (!Object.ReferenceEquals(pet.Source, frames[actionFrame])) pet.Source = frames[actionFrame];
+        }
+        double PoseDuration(string state, int row, int index) {
+            return (state == "sleep" ? 480 : state == "eat" || state.StartsWith("eat-", StringComparison.Ordinal) ? 220 : interactionActions.ContainsKey(state) ? 200 : row == 1 || row == 2 ? 90 : row == 0 ? idleTiming[index] : row == 4 ? 160 : 180) / 1000.0;
         }
         string CurrentAnimationState() {
             if (dragging) return "surprise";
@@ -270,11 +325,15 @@ namespace CodexGirl {
         void ClampToScreen() { Rect a = CurrentWorkArea(); Left = Math.Max(a.Left, Math.Min(Left, a.Right - Width)); Top = Math.Max(a.Top, Math.Min(Top, a.Bottom - Height)); }
         void Recover() { Show(); SetPassthrough(false); Left = SystemParameters.WorkArea.Right - Width - 20; Top = SystemParameters.WorkArea.Bottom - Height - 20; ApplyScale(); Activate(); SavePrefs(); }
         void LoadDesktopPrefs() {
-            try { var d = QuotaData.Object(new JavaScriptSerializer().DeserializeObject(File.ReadAllText(DesktopPrefs))); object mode = QuotaData.Get(d, "mode"); if (mode is string && modeItems.ContainsKey((string)mode)) movementMode = (string)mode; }
+            try {
+                var d = QuotaData.Object(new JavaScriptSerializer().DeserializeObject(File.ReadAllText(DesktopPrefs)));
+                object mode = QuotaData.Get(d, "mode"); if (mode is string && modeItems.ContainsKey((string)mode)) movementMode = (string)mode;
+                object rate = QuotaData.Get(d, "frameRate"); if (rate != null && Convert.ToString(rate) == "30") targetFrameRate = 30;
+            }
             catch (IOException) { } catch (UnauthorizedAccessException) { } catch (ArgumentException) { }
             // Always start clickable so a changed tray or monitor configuration cannot lock the pet out.
         }
-        void SaveDesktopPrefs() { try { Directory.CreateDirectory(workDirectory); string temp = DesktopPrefs + ".tmp"; File.WriteAllText(temp, new JavaScriptSerializer().Serialize(new { mode = movementMode })); if (File.Exists(DesktopPrefs)) File.Replace(temp, DesktopPrefs, null); else File.Move(temp, DesktopPrefs); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
+        void SaveDesktopPrefs() { try { Directory.CreateDirectory(workDirectory); string temp = DesktopPrefs + ".tmp"; File.WriteAllText(temp, new JavaScriptSerializer().Serialize(new { mode = movementMode, frameRate = targetFrameRate })); if (File.Exists(DesktopPrefs)) File.Replace(temp, DesktopPrefs, null); else File.Move(temp, DesktopPrefs); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
         void CreateTray() {
             try {
                 var bitmap = new System.Drawing.Bitmap(32, 32);
