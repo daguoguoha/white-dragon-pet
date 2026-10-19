@@ -1,0 +1,46 @@
+{
+  ".gitignore": {
+    "bytes": 57,
+    "sha256": "b123728c2afe48a6bc27071bb331ca082ab44c1dd8011cef4fbf24c155d742d7"
+  },
+  "layout.json": {
+    "bytes": 517,
+    "sha256": "da9a08d6edd58dc752eefcbcc8bf2d14ae673534ffd7cf20faee7ffeb3354dd8"
+  },
+  "README.md": {
+    "bytes": 1467,
+    "sha256": "907c5604682f9d79a4e2ccabd3ca4efda0a20ea4245ea0160fa64d9b09d17269"
+  },
+  "assets/main-look.png": {
+    "bytes": 1421128,
+    "sha256": "5024885a826d3bf39544423fc3fd65c643b75d5ae297bee3ec13a61cd7c40c7c"
+  },
+  "assets/spritesheet.png": {
+    "bytes": 3407106,
+    "sha256": "5f005dfa78832a39409cbd30c659c26e82fc260d8a5a79f315fe570ef544475d"
+  },
+  "previews/all-states.gif": {
+    "bytes": 1126817,
+    "sha256": "7c613658d583395750fba03743b55f44788438ca088956c946dee39ffdb81d4b"
+  },
+  "previews/all-states.mp4": {
+    "bytes": 223812,
+    "sha256": "f95740cd9e82347b64842983627f25345030fc06c7c10161c3ac4a26689cfc59"
+  },
+  "previews/idle-jump-idle.gif": {
+    "bytes": 192777,
+    "sha256": "8dd9edb188ed93d66c1d00cb5c6054d9d79b1cb19ce9ffd93fc11d1a4fd8563c"
+  },
+  "previews/idle.gif": {
+    "bytes": 67655,
+    "sha256": "c08aa06bd198431ec51d7c897374391d77cb42c03b47fc4c0e4131f12f68c8c6"
+  },
+  "previews/look-loop.gif": {
+    "bytes": 293001,
+    "sha256": "f170e812f9a2f989c3d6e71377caf386bce58757ad169e2b524679d4dcb993b9"
+  },
+  "previews/motion-stills.png": {
+    "bytes": 169118,
+    "sha256": "10af3d7a6eb4fcc55dddb788348c6628af141272083513b1760f6367dfdc73e0"
+  }
+}

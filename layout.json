@@ -1,0 +1,36 @@
+{
+  "sprite_version": 2,
+  "file": "assets/spritesheet.png",
+  "width": 1536,
+  "height": 2288,
+  "columns": 8,
+  "rows": 11,
+  "cell_width": 192,
+  "cell_height": 208,
+  "frames_per_row": [
+    6,
+    8,
+    8,
+    4,
+    5,
+    8,
+    6,
+    6,
+    6,
+    8,
+    8
+  ],
+  "states": [
+    "idle",
+    "running-right",
+    "running-left",
+    "waving",
+    "jumping",
+    "failed",
+    "waiting",
+    "working",
+    "review",
+    "look-000-to-157.5",
+    "look-180-to-337.5"
+  ]
+}
