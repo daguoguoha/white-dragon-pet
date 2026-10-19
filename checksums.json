@@ -1,15 +1,15 @@
 {
   ".gitignore": {
-    "bytes": 57,
-    "sha256": "b123728c2afe48a6bc27071bb331ca082ab44c1dd8011cef4fbf24c155d742d7"
+    "bytes": 64,
+    "sha256": "737c8b465d6794e42d59cbe34b7a5a7aafb8adb9a04cf8a546fcd5d4d1f1491a"
   },
   "layout.json": {
     "bytes": 517,
     "sha256": "da9a08d6edd58dc752eefcbcc8bf2d14ae673534ffd7cf20faee7ffeb3354dd8"
   },
   "README.md": {
-    "bytes": 1467,
-    "sha256": "907c5604682f9d79a4e2ccabd3ca4efda0a20ea4245ea0160fa64d9b09d17269"
+    "bytes": 1874,
+    "sha256": "51c9a15879b020dd85ea714dd21d0477f545767e0a2975e9f39fdba9e27f157d"
   },
   "assets/main-look.png": {
     "bytes": 1421128,
@@ -42,5 +42,29 @@
   "previews/motion-stills.png": {
     "bytes": 169118,
     "sha256": "10af3d7a6eb4fcc55dddb788348c6628af141272083513b1760f6367dfdc73e0"
+  },
+  "install/Install.ps1": {
+    "bytes": 5008,
+    "sha256": "f45dd3f75bf4ec7acce80bce109e77e7d800a5045a3e5bb61a04268d8601b4d5"
+  },
+  "install/Install.cmd": {
+    "bytes": 226,
+    "sha256": "57bd7a5304d6ca8525ef36aa5a34f3490bca577f3fc3e153eef2a71903084ecb"
+  },
+  "install/README.md": {
+    "bytes": 1571,
+    "sha256": "334c50a1df8a75c46503bd0b9d4a468fbe3082150b9f9f3f4b7ab1252b59e484"
+  },
+  "release/version.txt": {
+    "bytes": 6,
+    "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+  },
+  "release/build_release.py": {
+    "bytes": 3047,
+    "sha256": "d083c95237da7584338c49184483420f5941612522e92cab1e1f59b9411c3c86"
+  },
+  ".github/workflows/release.yml": {
+    "bytes": 1101,
+    "sha256": "7fae09746275014109eda76b792f6ac298fb9ead87848a8a94bafc8fe3079264"
   }
 }

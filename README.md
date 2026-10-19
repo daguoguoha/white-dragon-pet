@@ -19,6 +19,8 @@
 
 ## 使用
 
+Windows 用户可前往 [最新 Release](https://github.com/daguoguoha/white-dragon-pet/releases/latest)，下载 `Codex-Girl-v1.0.0-Windows.zip`，完整解压后双击 `Install.cmd`。安装后在桌面端的 **设置 → 宠物 → 刷新** 中选择 **Codex娘**。需要支持 v2 自定义宠物的桌面端；本地安装不自动同步到网页账户。详见 [安装说明](install/README.md)。
+
 下载 `assets/spritesheet.png`，通过支持上述 v2 格式的宠物创建或更新工具导入。`assets/main-look.png` 是参考原画，不是可直接导入的精灵图。
 
 ## 检查与已知差异

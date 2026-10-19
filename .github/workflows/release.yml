@@ -1,0 +1,36 @@
+name: Build and publish Windows installer
+on:
+  push:
+    branches: [main]
+    paths: [release/version.txt]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: pet-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build installer
+        run: python3 release/build_release.py
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < release/version.txt)"
+          tag="v${version}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists; refusing to replace published assets."
+            exit 1
+          fi
+          gh release create "$tag" \
+            "dist/Codex-Girl-${tag}-Windows.zip" dist/SHA256SUMS.txt \
+            --target "$GITHUB_SHA" --title "Codex娘 ${tag}" \
+            --notes-file dist/release-notes.md --draft
+          gh release edit "$tag" --draft=false --latest

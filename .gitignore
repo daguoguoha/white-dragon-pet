@@ -4,3 +4,4 @@ __pycache__/
 Thumbs.db
 .env
 .env.*
+dist/
