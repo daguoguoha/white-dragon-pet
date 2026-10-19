@@ -1,0 +1,27 @@
+{
+  "fish": {
+    "sha256": "59d491d71b56e3f5e64b11e54d994c6c6337d36db122b298f2c43f98db65cfda",
+    "bytes": 3075975,
+    "valid": true
+  },
+  "cake": {
+    "sha256": "930fe93c9a8c9cd3989049cb581579eed2e6020c397dbcb49c350d044bdeff60",
+    "bytes": 3083617,
+    "valid": true
+  },
+  "lollipop": {
+    "sha256": "cbeba74ff43821eb1c0bc91442da6d1c4806418e0539a429e4981f9a9adbeaad",
+    "bytes": 3075986,
+    "valid": true
+  },
+  "dango": {
+    "sha256": "21c18d6d5a73f2501f1ad5016e7dd7f5cc8d9fec374cb939137a077df0f90119",
+    "bytes": 3082983,
+    "valid": true
+  },
+  "diamond": {
+    "sha256": "096fe32c3cdee89d74ba4055691718276b083b35759bf937fe7f7dac3347c637",
+    "bytes": 3074597,
+    "valid": true
+  }
+}

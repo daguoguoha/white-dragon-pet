@@ -1,0 +1,27 @@
+{
+  "tool": "built-in image_gen",
+  "reference": "assets/interactions-v2.png",
+  "common": "Use case: illustration-story. Asset: a production FOUR-FRAME 2D animation sprite atlas for the existing chibi dragon girl in the reference image. The reference is an identity/style reference only, not the target sheet to copy. Preserve her exact white fluffy hair, white curved horns, lavender eyes, flower knot on viewer right, pointy ears, tiny lavender bat wings, white curled dragon tail, simple white dress and tiny shoes, same cute chibi proportions and purple outlines. Generate a square 1024x1024 RGBA canvas with real transparent empty background. Exactly TWO columns and TWO rows, FOUR complete full-body sprites. Read sequence top-left, top-right, bottom-left, bottom-right. Each sprite stays wholly inside its own 512x512 cell with generous 60pixel transparent margins; keep feet at local y=440, body centered x=256. Identical character scale, fixed foot baseline, no camera moves. Draw smooth visibly different pose phases. No labels, no lettering, no panel lines, no backdrop, no ground shadows, no hearts or floating symbols. Only the specified food prop. Keep face clear and food clearly recognizable. All horns, shoes, wings and tail must remain in frame.",
+  "foods": {
+    "fish": {
+      "prompt": "Food/action: EATING A SMALL DRIED FISH. The prop is a clearly recognizable small whole golden-brown fish with a head, eye, fins and forked tail, held horizontally in both hands, never a biscuit or candy. Frame1: holding fish just below open smiling mouth, preparing to nibble. Frame2: mouth touching fish's head-end, taking a little bite, eyes half-closed. Frame3: lowers fish to chest while cheeks puff and eyes close, chewing. Frame4: swallows with a contented small open smile, fish still visible lower at chest. Preserve the same fish shape and orientation, natural hands with no extra fingers.",
+      "file": "assets/foods/fish-v1.png"
+    },
+    "cake": {
+      "prompt": "Food/action: EATING STRAWBERRY LAYER CAKE WITH A TINY FORK. Clearly recognizable small triangular slice of white-and-pink layer cake topped with a red strawberry on a little plain saucer held in the LEFT hand; the RIGHT hand holds a small fork. Frame1: shows the cake at chest height, right hand raises fork with a tiny pink cake morsel. Frame2: brings fork morsel to open mouth, cake and strawberry remain visible on saucer. Frame3: withdraws empty fork, closes eyes and gently puffs cheeks chewing; saucer remains stable. Frame4: happy satisfied smile, fork lowers back toward the cake. The fork must be distinct from the cake; no cookie, no lollipop, no extra utensils, no extra fingers.",
+      "file": "assets/foods/cake-v1.png"
+    },
+    "lollipop": {
+      "prompt": "Wholesome cartoon food animation: ENJOYING A LOLLIPOP. A cheerful fantasy chibi mascot holds a clearly recognizable ROUND PINK AND WHITE SPIRAL LOLLIPOP on a straight white stick. Four simple everyday candy poses: 1 holds the lollipop beside her happy smiling face; 2 brings the candy in front of her closed smiling mouth with the stick visible below; 3 eyes closed with happy rounded cheeks, candy still at mouth height; 4 lowers the candy to chest height with a satisfied smile. Keep the same candy in all four frames. No other food or utensils. No tongue, no mouth closeup, no exaggerated mouth detail. Full-body mascot sprite throughout.",
+      "file": "assets/foods/lollipop-v1.png"
+    },
+    "dango": {
+      "prompt": "Food/action: EATING HANAMI DANGO. The prop is a wooden skewer with THREE clearly distinct round dango dumplings colored PINK, WHITE and LIGHT GREEN stacked vertically on the same stick. Four wholesome cartoon poses: Frame1 holds three-color dango vertically with the top pink ball beside her happy open smile. Frame2 raises the top pink ball to her mouth and takes a small bite, skewer and lower white/green balls clearly visible. Frame3 eyes closed with softly puffed cheeks while chewing, skewer slightly lowered. Frame4 satisfied bright smile, skewer held at chest height ready for another mouthful. Dango must stay recognizable as three pastel round balls on a wooden skewer, never a spiral lollipop, fish, biscuit or cake. No extra props.",
+      "file": "assets/foods/dango-v1.png"
+    },
+    "diamond": {
+      "prompt": "Food/action: A LITTLE DRAGON ABSORBS ENERGY FROM A DIAMOND TREAT. The prop is one large clearly recognizable faceted cyan-blue diamond gemstone held in BOTH HANDS at chest height, a precious crystal cut with a flat top and pointed bottom, never food, candy, a cookie or a bag. Four distinct fantasy sprite poses: Frame1: shows the diamond with curious bright open eyes. Frame2: holds it close to her chest with eyes gently closed, subtle soft cyan light glows from INSIDE the gemstone. Frame3: keeps eyes closed and smiles peacefully as the gemstone glows a little brighter, slight blue rim light on her hands and cheeks, no beams or floating objects. Frame4: eyes open in a delighted satisfied smile, brings the diamond forward slightly, its inner glow relaxes. Keep diamond visibly present in all four frames, no biting a hard stone. Keep glow confined around gemstone/hands, empty background fully transparent.",
+      "file": "assets/foods/diamond-v1.png"
+    }
+  }
+}

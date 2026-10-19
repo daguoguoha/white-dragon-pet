@@ -8,8 +8,8 @@
     "sha256": "da9a08d6edd58dc752eefcbcc8bf2d14ae673534ffd7cf20faee7ffeb3354dd8"
   },
   "README.md": {
-    "bytes": 3007,
-    "sha256": "e3afe1a2a8b5a4ed86df406ae0b1cc6a5046c0ab55c9bd54f2f51b2a43fdc47d"
+    "bytes": 3454,
+    "sha256": "b0902ef54f906252ec2ebe5218dc761a6740d2b4559f137e068a070132946c8b"
   },
   "assets/main-look.png": {
     "bytes": 1421128,
@@ -52,20 +52,20 @@
     "sha256": "107870a83406fb8192363c56a95b01d315cd74bf3bc842f2c2a5a931a754434d"
   },
   "install/README.md": {
-    "bytes": 3398,
-    "sha256": "a06c32d8fe2e892f648fee4e2ea5204833976cacc2d8146ba0035cee0c118c4b"
+    "bytes": 3892,
+    "sha256": "57dff59ab95c22ee86e7646c1f7044626c01b9149b545fa2a2ee7f6615b693ea"
   },
   "release/version.txt": {
     "bytes": 6,
-    "sha256": "1575e1af4a95f12f70b4ee6a6adce8160953d93ea17dc2611b90883ccc3ad3b8"
+    "sha256": "1e5b51cde515396a9fa762909cf8ca6584ccc564b325d2eebeea76175fe95c4d"
   },
   "release/build_release.py": {
-    "bytes": 4993,
-    "sha256": "3473ad6d695b6931495b5ba3f6447834e82f9d8168d87e33753c2ee07b74c492"
+    "bytes": 5743,
+    "sha256": "e31d65352145bca5667f2cadbff7b88528856d5c92a16083c93ee07974cee6fd"
   },
   ".github/workflows/release.yml": {
-    "bytes": 1101,
-    "sha256": "7fae09746275014109eda76b792f6ac298fb9ead87848a8a94bafc8fe3079264"
+    "bytes": 1130,
+    "sha256": "9b723b6a2cdf0a40c7a73045fcf2f6ba4b3caef42b72398c44f673793eda53ec"
   },
   "install/Start-Quota.cmd": {
     "bytes": 76,
@@ -73,38 +73,50 @@
   },
   "quota/QuotaCore.cs": {
     "bytes": 11185,
-    "sha256": "343669f097f2c1339559e852ae3098ba50b5cce97b7956bd7a0162a0e7d51089"
+    "sha256": "a27faedaa949ead5d9727977af90ecdcf4cb252f3936087c05472bed3751d338"
   },
   "quota/QuotaPet.cs": {
-    "bytes": 17171,
-    "sha256": "c531ccd184cd567b795ab30107832dcb530c66edabcd94578d82154dd2ecf281"
+    "bytes": 19327,
+    "sha256": "7a84f52c2ed8c8338042f8b99273339ab72f78bed6b2ae2133aa68e4eb37daed"
   },
   "quota/Program.cs": {
-    "bytes": 2002,
-    "sha256": "bde875c11c253949806d32de0845bde5a125b48162e1db19f559c227577fc247"
+    "bytes": 3457,
+    "sha256": "3c205a002f51b24233b18e68e8d3c5081e1ac3be6c4a2ffc084963845cc497b2"
   },
   "quota/Start-Quota.ps1": {
-    "bytes": 2597,
-    "sha256": "8dc5f9884c17f8067815998eaadef106c161327af55c7e56929cfee56572165f"
+    "bytes": 2666,
+    "sha256": "c7aefabb8158ee65428d2e429d0e8026d9db25db3256314a4db428431702ebcd"
   },
   "release/Build-Windows.ps1": {
-    "bytes": 1451,
-    "sha256": "880c5149595ead9011ebde6f4a786c1eeb17a8178a100fc93286c1f0bebc1eca"
+    "bytes": 1991,
+    "sha256": "d27d66ead8d0f1dd697b3fcadb6cbe561e66a55bd362e0de5b9306fdb3b29f27"
   },
   "runtime/CodexGirlQuota.exe": {
-    "bytes": 36352,
-    "sha256": "4861dd21c2eb5de327400ae445a8373011c0512dc816d0c20e0b092e147be62b"
+    "bytes": 3454976,
+    "sha256": "0f3d3ced354d17fe322b964419d227bad0ac72520070042e909703b7b51a4176"
   },
   "runtime/CodexGirlQuota.exe.config": {
     "bytes": 162,
     "sha256": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5"
   },
   "runtime/build-info.json": {
-    "bytes": 469,
-    "sha256": "28a26bd107a4ff4397ac9f8c5d8910aa9309570e84d53df643729a5272ccfdee"
+    "bytes": 818,
+    "sha256": "8aa3f2a04175590c973024dc7b185ae0cdfd4af84ccb1c4cb865fee6a395fc74"
   },
   "tests/Quota.Tests.ps1": {
     "bytes": 2356,
     "sha256": "7f9cdc0a71527e9a15c484804cb19e6f86bd2cc66ea17fefdc2b13d8ad8f32a1"
+  },
+  "quota/PetInstaller.cs": {
+    "bytes": 6780,
+    "sha256": "57c10da60d15320063814bf05a7c2df3712e8afe467f2e7f7956833d0df0b5a6"
+  },
+  "quota/PetImportWindow.cs": {
+    "bytes": 4295,
+    "sha256": "d175c4bdb7a5eea144d4dcd4ce55426f8ce52cdad6ffb79492c3f93e97657183"
+  },
+  "tests/Import.Tests.ps1": {
+    "bytes": 4796,
+    "sha256": "843680abac530b2b176ec5d42369c75169eedad609c4ef320360175adeec73e9"
   }
 }

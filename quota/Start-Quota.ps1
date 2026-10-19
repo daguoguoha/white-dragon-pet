@@ -2,13 +2,14 @@
 param([string]$PreviewPath, [string]$FixturePath, [switch]$ReadQuota, [switch]$PreviewFailure)
 $ErrorActionPreference = 'Stop'
 try {
-    Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Xaml, System.Web.Extensions
-    $references = @('System.dll', 'System.Core.dll', [System.Web.Script.Serialization.JavaScriptSerializer].Assembly.Location,
+    Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Xaml, System.Web.Extensions, System.Windows.Forms, System.Drawing, System.Security
+    $references = @('System.dll', 'System.Core.dll', 'System.Security.dll', 'System.Windows.Forms.dll', 'System.Drawing.dll', [System.Web.Script.Serialization.JavaScriptSerializer].Assembly.Location,
         [System.Windows.Window].Assembly.Location,
         [System.Windows.Media.ImageSource].Assembly.Location,
         [System.Windows.Threading.Dispatcher].Assembly.Location,
         [System.Xaml.XamlReader].Assembly.Location)
-    Add-Type -Path @((Join-Path $PSScriptRoot 'QuotaCore.cs'), (Join-Path $PSScriptRoot 'QuotaPet.cs')) -ReferencedAssemblies $references
+    $sourceFiles = @('QuotaCore.cs', 'QuotaPet.cs', 'PetInstaller.cs', 'PetImportWindow.cs', 'PetBehavior.cs', 'DesktopPet.cs', 'CompanionServices.cs', 'CompanionDialogs.cs', 'InteractionAnimations.cs') | ForEach-Object { Join-Path $PSScriptRoot $_ }
+    Add-Type -Path $sourceFiles -ReferencedAssemblies $references
     $root = Split-Path $PSScriptRoot -Parent
     $sheet = Join-Path $root 'spritesheet.png'
     if (-not (Test-Path -LiteralPath $sheet)) { $sheet = Join-Path $root 'pet\spritesheet.png' }

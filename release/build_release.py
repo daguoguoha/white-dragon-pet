@@ -23,7 +23,7 @@ manifest = (json.dumps({
     'spriteVersionNumber': 2,
     'spritesheetPath': 'spritesheet.png',
 }, ensure_ascii=False, indent=2) + '\n').encode('utf8')
-payload = {'pet/pet.json': manifest, 'pet/spritesheet.png': sheet}
+payload = {'pet/pet.json': manifest, 'pet/spritesheet.png': sheet, 'THIRD_PARTY_NOTICES.md': (ROOT / 'THIRD_PARTY_NOTICES.md').read_bytes()}
 for name in ('Install.cmd', 'Install.ps1', 'Start-Quota.cmd', 'README.md'):
     source = ROOT / 'install' / name
     text = source.read_text(encoding='utf-8-sig')
@@ -53,24 +53,33 @@ with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslev
 with zipfile.ZipFile(archive) as z:
     assert z.testzip() is None
 checksum = hashlib.sha256(archive.read_bytes()).hexdigest()
-(OUT / 'SHA256SUMS.txt').write_text(f'{checksum}  {archive.name}\n', encoding='ascii')
+standalone = OUT / f'Codex-Girl-{TAG}.exe'
+standalone.write_bytes(payload['quota/CodexGirlQuota.exe'])
+exe_checksum = hashlib.sha256(standalone.read_bytes()).hexdigest()
+(OUT / 'SHA256SUMS.txt').write_text(f'{checksum}  {archive.name}\n{exe_checksum}  {standalone.name}\n', encoding='ascii')
 (OUT / 'release-notes.md').write_text(f'''# Codex娘 {TAG}
 
-Windows 一键安装包，新增 **Quota 额度悬浮版**。下载 **{archive.name}**，完整解压后双击 **Install.cmd**。
+新增 **五种食物各自的专属动画**，每种四帧，共 20 帧：小鱼干双手咬嚼、蛋糕用叉子吃、棒棒糖含糖回味、三色团子串签、钻石抱着吸收光芒。原有摸头、心情和睡眠动画保留。原生 v2 精灵图不变，独立 EXE 内置补充图集。
 
-安装后自动启动额度宠物，之后可通过解压目录或安装目录中的 **Start-Quota.cmd** 打开，也可直接运行 **quota/CodexGirlQuota.exe**。
+独立桌宠互动参考 [GenhuiC-sudo/11](https://github.com/GenhuiC-sudo/11) 的代码逻辑，保留其 MIT 许可声明。
 
-宠物旁会显示额度窗口的剩余百分比和重置倒计时，每分钟刷新一次。支持多个额度桶；网络失败会标记旧数据，缺失值显示暂不可用。可拖动、招手、调大小和切换置顶。
+直接下载并打开 **{standalone.name}** 即可，素材已内置，Windows 需要 .NET Framework 4.8。
 
-- 无需管理员权限、Python、Git；额度读取需要已登录的 Codex CLI 和网络，安装器本身可离线运行，支持 `CODEX_HOME`。
-- Windows 程序使用系统的 .NET Framework 4.8，保留解压目录即可直接运行。
-- 通过官方 App Server 的 `account/rateLimits/read` 读取 CLI 当前登录账户；不发送模型请求，不读取或复制令牌文件，不记录账户信息。
-- 此悬浮版独立于原生宠物窗口；原生宠物没有实时文字插槽。它不跟随原生宠物的聊天状态，也不会自动隐藏原生宠物。若同时显示两只，可在原生宠物菜单中隐藏其中一只。
-- 文件校验、安装后复核、升级前备份，重复安装相同版本不会重复备份。
-- v2 透明精灵图，九种动画状态和十六个视线方向。
-- 面向支持 v2 自定义宠物的 Windows 桌面端，本地安装不会自动同步到网页账户。
+- 按住头部小幅来回轻抚；拖动身体移动，点击身体戳一戳。
+- 右键 **互动** 可喂食、夸夸、逗逗、跳跃、玩游戏、读书；连续三次相同食物会嫌腻。
+- 右键 **活动模式** 选择原地陪伴、自由散步、跟随鼠标。闲置 90 秒会打瞌睡，互动会唤醒；贴边有托腮或倒挂效果。
+- 带对话气泡、爱心 / 星星 / z 粒子、心情值和动作淡入；移动按约 30 帧/秒更新，六组互动已使用专属四帧序列；走路沿用原有左右移动帧。呼吸、行走起伏和拖拽抖动参考大肥鱼的动画公式。
+- 托盘支持隐藏、恢复位置、解除鼠标穿透和退出。开机启动需手动开启，默认关闭。
+- 右键 **和她聊天 / AI 设置** 配置兼容 OpenAI 的接口根地址、模型和密钥。发送聊天才请求模型，可能产生所配服务的 API 费用；最近 40 条消息仅保存在窗口内存中。密钥用 Windows 当前账户加密保存。
+- 天气需手动输入城市并查询，使用 wttr.in，不读取定位。支持 CPU / 内存状态和占用提醒；GPU 温度暂不可用。
+- 保留每分钟刷新的 Codex CLI 账户额度、卡片隐藏，以及 **导入到 Codex Pet**。双击宠物切换额度卡片，喂食在右键菜单中。
 
-需要纯原生动画时，在 **设置 → 宠物 → 刷新** 中选择 **Codex娘** 并输入 `/pet`。额度版不会接管当前宠物选择。
+这是独立 EXE 的功能。导入原生 Codex Pet 的仍是动画素材；新交互不进入原生窗口。角色保留 Codex娘的外观，未直接使用参考项目立绘。五种喂食会切换各自的道具和动作，连续三次同款仍会嫌腻；托盘负责窗口显示和隐藏，无角色专属动作。
 
-`SHA256SUMS.txt` 提供安装包的 SHA-256 校验值。\n''', encoding='utf8')
-print(json.dumps({'tag': TAG, 'archive': str(archive), 'bytes': archive.stat().st_size, 'sha256': checksum}, ensure_ascii=False))
+额度通过官方 App Server 的 `account/rateLimits/read` 读取；不保存令牌，不发起模型请求。可选的 AI 聊天使用你单独配置的接口和密钥，与 Codex 登录及额度读取分开。
+
+ZIP **{archive.name}** 完整解压后也可运行 **Install.cmd**。升级前退出旧程序。卸载前若曾启用开机启动，请先在菜单关闭。
+
+`SHA256SUMS.txt` 提供 EXE 和 ZIP 的校验值。
+''', encoding='utf8')
+print(json.dumps({'tag': TAG, 'archive': str(archive), 'bytes': archive.stat().st_size, 'sha256': checksum, 'standalone': str(standalone), 'exe_sha256': exe_checksum}, ensure_ascii=False))

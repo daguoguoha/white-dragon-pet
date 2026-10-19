@@ -1,8 +1,24 @@
 {
-    "executable_sha256":  "4861dd21c2eb5de327400ae445a8373011c0512dc816d0c20e0b092e147be62b",
+    "executable_sha256":  "8633dc33f1a62fd4255541df6d51b1456c642807f504457ec377d1a1491fd8a5",
     "sources":  {
-                    "quota/QuotaCore.cs":  "343669f097f2c1339559e852ae3098ba50b5cce97b7956bd7a0162a0e7d51089",
-                    "quota/QuotaPet.cs":  "c531ccd184cd567b795ab30107832dcb530c66edabcd94578d82154dd2ecf281",
-                    "quota/Program.cs":  "bde875c11c253949806d32de0845bde5a125b48162e1db19f559c227577fc247"
+                    "quota/QuotaCore.cs":  "a27faedaa949ead5d9727977af90ecdcf4cb252f3936087c05472bed3751d338",
+                    "quota/QuotaPet.cs":  "b38f10cdaa7ad22f5f81174e25568f12fc366fb3098f9e53af7e37d96551e8df",
+                    "quota/Program.cs":  "d3513775ff09924125cef0a22c3340afc4dddc0866729e8fb2cbe5c6549635cd",
+                    "quota/AssemblyInfo.cs":  "772f6829e6d59e6981d4c79d21d3f599d4482344f2cf8dcf68ee87843ba7e14a",
+                    "quota/PetInstaller.cs":  "57c10da60d15320063814bf05a7c2df3712e8afe467f2e7f7956833d0df0b5a6",
+                    "quota/PetImportWindow.cs":  "d175c4bdb7a5eea144d4dcd4ce55426f8ce52cdad6ffb79492c3f93e97657183",
+                    "quota/PetBehavior.cs":  "5d28684f5733cc89ee13de64dd8427d120e3e0a6942f271487b811f51e1f17b2",
+                    "quota/DesktopPet.cs":  "5dd9cdf52f88196e279e2f67d147be6565c1b36ca2b27a9b9b24ba31d95e1060",
+                    "quota/CompanionServices.cs":  "4d8968bb25cb35840ab18f830c221d54f2a3b7b5d1d15ec601750bafc665d564",
+                    "quota/CompanionDialogs.cs":  "d7bf43f08d3178b3866eb071811b5c89436ccab62d9cf8148c267172efd45eb0",
+                    "quota/InteractionAnimations.cs":  "9a32d2f7931e237e09729cfcfd31ef80f6826e609509c2a75c8cd6158b6e9fb5",
+                    "assets/spritesheet.png":  "5f005dfa78832a39409cbd30c659c26e82fc260d8a5a79f315fe570ef544475d",
+                    "THIRD_PARTY_NOTICES.md":  "b42f80146f19c0b1637704dbc78262923a58bb797e3655273910f24461bccf2b",
+                    "assets/interactions-v2.png":  "4a0544fb4e14186be2a1756e27228da5fc0e6fce7fce951b8d0ce13864cb557a",
+                    "assets/foods/fish-v1.png":  "ee8ce5d94d1ac6405aec4f191fd892053826ab23aa3669f57a9418f0bcf44bd2",
+                    "assets/foods/cake-v1.png":  "42d82242c6e7140fb3e343632f64a50030435f381179c58db2d1b9967238c5ff",
+                    "assets/foods/lollipop-v1.png":  "8d9086459764f31316c6f33c4e1d3cca1f8f4c638b21e04e7fd49c263af2c415",
+                    "assets/foods/dango-v1.png":  "1af9778920b126627484abe5759b2c899859cf4e61fde59533d9e23cfd49ed70",
+                    "assets/foods/diamond-v1.png":  "fbafdb0323d50bc6d79cef52730c4eda2b93dade57e1e7cd8b76ce1e81e830bc"
                 }
 }

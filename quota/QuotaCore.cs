@@ -169,7 +169,7 @@ namespace CodexGirl {
                 lock (gate) { if (Object.ReferenceEquals(sender, process)) foreach (var waiter in pending.Values) waiter.TrySetException(new IOException("Codex server stopped")); }
             };
             process.Start(); process.BeginOutputReadLine(); process.BeginErrorReadLine();
-            Request("initialize", new { clientInfo = new { name = "codex_girl_quota", title = "Codex Girl Quota", version = "1.1.0" } });
+            Request("initialize", new { clientInfo = new { name = "codex_girl_quota", title = "Codex Girl Quota", version = "1.2.0" } });
             Send(new { method = "initialized", @params = new { } });
         }
         public QuotaSnapshot Read() {

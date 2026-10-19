@@ -1,0 +1,37 @@
+{
+  "file": "assets/interactions-v2.png",
+  "width": 1024,
+  "height": 1536,
+  "columns": 4,
+  "row_edges": [
+    0,
+    256,
+    512,
+    768,
+    1024,
+    1270,
+    1536
+  ],
+  "states": [
+    "stroke",
+    "eat",
+    "happy",
+    "angry",
+    "bored",
+    "sleep"
+  ],
+  "frames_per_state": 4,
+  "frame_duration_ms": {
+    "stroke": 200,
+    "eat": 220,
+    "happy": 200,
+    "angry": 200,
+    "bored": 200,
+    "sleep": 480
+  },
+  "rendered_cell": [
+    192,
+    208
+  ],
+  "normalization": "Fixed scale per sequence, feet at y=202. Preserve original native v2 atlas unchanged."
+}

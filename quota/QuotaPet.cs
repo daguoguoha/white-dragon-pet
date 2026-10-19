@@ -13,10 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace CodexGirl {
-    public sealed class QuotaPetWindow : Window {
+    public sealed partial class QuotaPetWindow : Window {
         readonly string prefsPath;
         readonly string codexDirectory;
         readonly string workDirectory;
+        readonly string sheetPath;
         readonly Image pet = new Image();
         readonly TextBlock status;
         readonly TextBlock firstTitle;
@@ -30,8 +31,8 @@ namespace CodexGirl {
         readonly ComboBox buckets = new ComboBox();
         readonly Border card;
         readonly Grid layout;
+        readonly MenuItem quotaMenu;
         readonly List<BitmapSource> idle = new List<BitmapSource>();
-        readonly List<BitmapSource> wave = new List<BitmapSource>();
         readonly DispatcherTimer animation = new DispatcherTimer();
         readonly DispatcherTimer heartbeat = new DispatcherTimer();
         readonly Brush violet = BrushOf("#9683D0");
@@ -46,9 +47,8 @@ namespace CodexGirl {
         int failures;
         DateTime nextPoll = DateTime.MinValue;
         DateTime lastAttempt = DateTime.MinValue;
-        bool waving;
-        int frame;
         double scale = 1;
+        bool quotaVisible = true;
 
         static Brush BrushOf(string hex) { var b = (Brush)new BrushConverter().ConvertFromString(hex); b.Freeze(); return b; }
         static TextBlock Text(string text, double size, string color) {
@@ -61,11 +61,12 @@ namespace CodexGirl {
             prefsPath = Path.Combine(dataDirectory, "settings.json");
             workDirectory = dataDirectory;
             codexDirectory = codexHome;
+            sheetPath = sheet;
             Title = "Codex娘 · Quota";
             WindowStyle = WindowStyle.None; AllowsTransparency = true; Background = Brushes.Transparent;
             ResizeMode = ResizeMode.NoResize; ShowInTaskbar = true; Topmost = true;
             FontFamily = new FontFamily("Microsoft YaHei UI");
-            layout = new Grid { Width = 470, Height = 248, Background = Brushes.Transparent };
+            layout = new Grid { Width = 470, Height = 286, Background = Brushes.Transparent };
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(204) });
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(258) });
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(8) });
@@ -73,18 +74,11 @@ namespace CodexGirl {
             pet.Margin = new Thickness(0, 0, 0, 16); pet.Stretch = Stretch.Uniform;
             RenderOptions.SetBitmapScalingMode(pet, BitmapScalingMode.HighQuality);
             pet.Cursor = Cursors.SizeAll;
-            pet.ToolTip = "拖动移动 · 单击招手 · 右键设置";
-            pet.MouseLeftButtonDown += delegate(object s, MouseButtonEventArgs e) {
-                if (e.ClickCount == 2) { Refresh(true); return; }
-                Point before = new Point(Left, Top);
-                try { DragMove(); } catch (InvalidOperationException) { }
-                if (Math.Abs(Left - before.X) + Math.Abs(Top - before.Y) < 3) { waving = true; frame = 0; Animate(); }
-            };
+            pet.ToolTip = "拖动移动 · 双击显示或隐藏额度 · 右键设置";
             layout.Children.Add(pet);
             var source = new BitmapImage(); source.BeginInit(); source.CacheOption = BitmapCacheOption.OnLoad; source.UriSource = new Uri(Path.GetFullPath(sheet)); source.EndInit(); source.Freeze();
             if (source.PixelWidth != 1536 || source.PixelHeight != 2288) throw new InvalidDataException("Expected v2 pet spritesheet");
             for (int x = 0; x < 6; x++) idle.Add(Crop(source, x, 0));
-            for (int x = 0; x < 4; x++) wave.Add(Crop(source, x, 3));
             pet.Source = idle[0];
 
             card = new Border { Background = BrushOf("#FCFAFF"), BorderBrush = BrushOf("#E3DDEE"), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(20), Padding = new Thickness(18, 14, 18, 12), VerticalAlignment = VerticalAlignment.Center };
@@ -92,6 +86,7 @@ namespace CodexGirl {
             var content = new StackPanel(); card.Child = content;
             var heading = new DockPanel { LastChildFill = true, Margin = new Thickness(0, 0, 0, 8) };
             var close = SmallButton("×"); close.ToolTip = "退出"; close.Click += delegate { Close(); }; DockPanel.SetDock(close, Dock.Right); heading.Children.Add(close);
+            var hide = SmallButton("−"); hide.ToolTip = "隐藏额度卡片；双击宠物可重新显示"; hide.Click += delegate { SetQuotaVisible(false); }; DockPanel.SetDock(hide, Dock.Right); heading.Children.Add(hide);
             var refresh = SmallButton("↻"); refresh.ToolTip = "刷新额度"; refresh.Click += delegate { Refresh(true); }; DockPanel.SetDock(refresh, Dock.Right); heading.Children.Add(refresh);
             var title = Text("Codex娘", 17, "#4E435E"); title.FontWeight = FontWeights.SemiBold; heading.Children.Add(title); content.Children.Add(heading);
             status = Text("正在读取额度…", 10.5, "#8C819B"); status.Margin = new Thickness(0, 0, 0, 12); content.Children.Add(status);
@@ -100,12 +95,19 @@ namespace CodexGirl {
             AddMeter(content, out secondTitle, out secondValue, out secondBar, out secondReset);
             buckets.FontSize = 10; buckets.Foreground = BrushOf("#80768E"); buckets.Margin = new Thickness(0, 1, 0, 0); buckets.MaxHeight = 24;
             buckets.Visibility = Visibility.Collapsed; buckets.SelectionChanged += delegate { UpdateLabels(); }; content.Children.Add(buckets);
+            var importPet = SmallButton("导入到 Codex Pet");
+            importPet.Margin = new Thickness(0, 5, 0, 0); importPet.HorizontalAlignment = HorizontalAlignment.Stretch;
+            importPet.ToolTip = "将这只宠物添加到 Codex 的宠物列表";
+            importPet.Click += delegate { OpenImport(); }; content.Children.Add(importPet);
             Content = layout;
             Left = Math.Max(SystemParameters.VirtualScreenLeft, SystemParameters.WorkArea.Right - 490);
-            Top = Math.Max(SystemParameters.VirtualScreenTop, SystemParameters.WorkArea.Bottom - 270);
+            Top = Math.Max(SystemParameters.VirtualScreenTop, SystemParameters.WorkArea.Bottom - 310);
             LoadPrefs(); ApplyScale();
             var menu = new ContextMenu();
+            quotaMenu = new MenuItem { Header = "显示额度卡片", IsCheckable = true, IsChecked = quotaVisible };
+            quotaMenu.Click += delegate { SetQuotaVisible(quotaMenu.IsChecked); }; menu.Items.Add(quotaMenu);
             AddItem(menu, "立即刷新", delegate { Refresh(true); });
+            AddItem(menu, "导入到 Codex Pet", OpenImport);
             var sizes = new MenuItem { Header = "显示大小" };
             foreach (double option in new double[] { .8, 1, 1.25, 1.5 }) {
                 double selected = option;
@@ -115,7 +117,8 @@ namespace CodexGirl {
             menu.Items.Add(sizes);
             var pin = new MenuItem { Header = "始终置顶", IsCheckable = true, IsChecked = Topmost };
             pin.Click += delegate { Topmost = pin.IsChecked; SavePrefs(); }; menu.Items.Add(pin);
-            AddItem(menu, "退出额度宠物", delegate { Close(); }); ContextMenu = menu;
+            AddItem(menu, "退出 Codex娘", delegate { Close(); }); ContextMenu = menu;
+            InitializeDesktop(source, menu);
             card.MouseLeftButtonDown += delegate(object s, MouseButtonEventArgs e) {
                 if (e.OriginalSource is TextBlock || e.OriginalSource == card) { try { DragMove(); } catch (InvalidOperationException) { } }
             };
@@ -127,6 +130,15 @@ namespace CodexGirl {
             };
         }
         static BitmapSource Crop(BitmapSource source, int column, int row) { var b = new CroppedBitmap(source, new Int32Rect(column * 192, row * 208, 192, 208)); b.Freeze(); return b; }
+        void OpenImport() { paused = true; try { new PetImportWindow(sheetPath, codexDirectory) { Owner = this, Topmost = Topmost }.ShowDialog(); } finally { paused = false; brain.Wake(DateTime.UtcNow); } }
+        void SetQuotaVisible(bool visible) {
+            if (quotaVisible == visible) return;
+            double previousHeight = Height;
+            quotaVisible = visible;
+            // Keep the pet's baseline in place while the card changes the window height.
+            Top += previousHeight - (quotaVisible ? 286 : 248) * scale;
+            ApplyScale(); SavePrefs();
+        }
         static void AddItem(ContextMenu menu, string title, Action action) { var item = new MenuItem { Header = title }; item.Click += delegate { action(); }; menu.Items.Add(item); }
         static void AddMeter(StackPanel content, out TextBlock label, out TextBlock value, out ProgressBar bar, out TextBlock reset) {
             var heading = new DockPanel(); value = Text("—", 15, "#5F4E79"); value.FontWeight = FontWeights.SemiBold;
@@ -135,11 +147,7 @@ namespace CodexGirl {
             reset = Text("重置时间暂不可用", 10, "#9C91A7"); reset.Margin = new Thickness(0, 0, 0, 12); content.Children.Add(reset);
         }
         void Animate() {
-            if (waving) {
-                if (frame >= wave.Count) { waving = false; frame = 0; }
-                else { pet.Source = wave[frame++]; animation.Interval = TimeSpan.FromMilliseconds(180); return; }
-            }
-            pet.Source = idle[frame % idle.Count]; animation.Interval = TimeSpan.FromMilliseconds(idleTiming[frame % idle.Count]); frame = (frame + 1) % idle.Count;
+            AnimateDesktop();
         }
         void Refresh(bool manual) {
             DateTime now = DateTime.UtcNow;
@@ -188,7 +196,12 @@ namespace CodexGirl {
             UpdateMeter(bucket == null ? null : bucket.Secondary, "长期", secondTitle, secondValue, secondBar, secondReset, stale);
         }
         void ApplyScale() {
-            layout.LayoutTransform = new ScaleTransform(scale, scale); Width = 470 * scale; Height = 248 * scale;
+            layout.Width = quotaVisible ? 470 : 204; layout.Height = quotaVisible ? 286 : 248;
+            layout.ColumnDefinitions[1].Width = new GridLength(quotaVisible ? 258 : 0);
+            layout.ColumnDefinitions[2].Width = new GridLength(quotaVisible ? 8 : 0);
+            card.Visibility = quotaVisible ? Visibility.Visible : Visibility.Collapsed;
+            if (quotaMenu != null) quotaMenu.IsChecked = quotaVisible;
+            layout.LayoutTransform = new ScaleTransform(scale, scale); Width = layout.Width * scale; Height = layout.Height * scale;
             Left = Math.Max(SystemParameters.VirtualScreenLeft, Math.Min(Left, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Width));
             Top = Math.Max(SystemParameters.VirtualScreenTop, Math.Min(Top, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Height));
         }
@@ -200,11 +213,12 @@ namespace CodexGirl {
                 double? x = QuotaData.Number(QuotaData.Get(settings, "left")); if (x.HasValue) Left = x.Value;
                 double? y = QuotaData.Number(QuotaData.Get(settings, "top")); if (y.HasValue) Top = y.Value;
                 object pin = QuotaData.Get(settings, "topmost"); if (pin is bool) Topmost = (bool)pin;
+                object showQuota = QuotaData.Get(settings, "showQuota"); if (showQuota is bool) quotaVisible = (bool)showQuota;
             } catch (IOException) { } catch (UnauthorizedAccessException) { } catch (ArgumentException) { }
         }
         void SavePrefs() {
             prefsDirty = false;
-            try { Directory.CreateDirectory(Path.GetDirectoryName(prefsPath)); File.WriteAllText(prefsPath, new JavaScriptSerializer().Serialize(new { left = Left, top = Top, scale = scale, topmost = Topmost })); }
+            try { Directory.CreateDirectory(Path.GetDirectoryName(prefsPath)); File.WriteAllText(prefsPath, new JavaScriptSerializer().Serialize(new { left = Left, top = Top, scale = scale, topmost = Topmost, showQuota = quotaVisible })); }
             catch (IOException) { } catch (UnauthorizedAccessException) { }
         }
         public void SetPreview(QuotaSnapshot sample, bool isFailed) {

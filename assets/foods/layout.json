@@ -1,0 +1,48 @@
+{
+  "columns": 2,
+  "rows": 2,
+  "sequence": "top-left, top-right, bottom-left, bottom-right",
+  "frames_per_food": 4,
+  "frame_duration_ms": 220,
+  "render_cell": [
+    192,
+    208
+  ],
+  "foods": {
+    "eat-fish": {
+      "file": "fish-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "x_cut": 627,
+      "y_cut": 627
+    },
+    "eat-cake": {
+      "file": "cake-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "x_cut": 627,
+      "y_cut": 627
+    },
+    "eat-lollipop": {
+      "file": "lollipop-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "x_cut": 627,
+      "y_cut": 627
+    },
+    "eat-dango": {
+      "file": "dango-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "x_cut": 627,
+      "y_cut": 627
+    },
+    "eat-diamond": {
+      "file": "diamond-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "x_cut": 627,
+      "y_cut": 627
+    }
+  }
+}
