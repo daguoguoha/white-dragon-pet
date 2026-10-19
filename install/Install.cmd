@@ -9,4 +9,5 @@ if errorlevel 1 (
   exit /b 1
 )
 echo.
+call "%~dp0Start-Quota.cmd"
 pause

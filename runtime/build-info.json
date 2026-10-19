@@ -1,0 +1,8 @@
+{
+    "executable_sha256":  "4861dd21c2eb5de327400ae445a8373011c0512dc816d0c20e0b092e147be62b",
+    "sources":  {
+                    "quota/QuotaCore.cs":  "343669f097f2c1339559e852ae3098ba50b5cce97b7956bd7a0162a0e7d51089",
+                    "quota/QuotaPet.cs":  "c531ccd184cd567b795ab30107832dcb530c66edabcd94578d82154dd2ecf281",
+                    "quota/Program.cs":  "bde875c11c253949806d32de0845bde5a125b48162e1db19f559c227577fc247"
+                }
+}
